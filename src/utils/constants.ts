@@ -1,2 +1,2 @@
 export const TOKEN = "token";
-export const apiPrefix = '/api';
+export const apiPrefix = "/api/v1";

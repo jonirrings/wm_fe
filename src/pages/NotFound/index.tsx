@@ -1,4 +1,4 @@
 function NotFound() {
-    return <>todo</>
+  return <>Not Found</>;
 }
 export default NotFound;

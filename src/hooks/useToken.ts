@@ -1,5 +1,5 @@
-import { TOKEN } from '../utils/constants.ts';
-import { setLocal, getLocal, removeLocal } from '../utils/local';
+import { TOKEN } from "../utils/constants.ts";
+import { setRawLocal, getRawLocal, removeLocal } from "../utils/local";
 
 /**
  * token存取方法
@@ -7,7 +7,7 @@ import { setLocal, getLocal, removeLocal } from '../utils/local';
 export function useToken() {
   /** 获取token */
   const getToken = () => {
-    return getLocal<string>(TOKEN) || '';
+    return getRawLocal(TOKEN) || "";
   };
 
   /**
@@ -15,11 +15,11 @@ export function useToken() {
    * @param value token值
    */
   const setToken = (value: string) => {
-    setLocal(TOKEN, value);
+    setRawLocal(TOKEN, value);
   };
 
   /** 删除token */
-   const removeToken = () => {
+  const removeToken = () => {
     removeLocal(TOKEN);
   };
 
