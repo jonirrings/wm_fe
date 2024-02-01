@@ -60,6 +60,11 @@ function ItemsList() {
   function toDelete(id: IDType) {
     del(id)
       .unwrap()
+      .then(() => {
+        if (data?.data.length === 1 && page > 1) {
+          setPage((p) => p - 1);
+        }
+      })
       .catch((err) => handleRTKError(err, message));
   }
 
@@ -107,10 +112,19 @@ function ItemsList() {
             setPage(p);
             setSize(s);
           },
+          pageSize: size,
+          current: page,
+          total: data?.total,
         }}
         rowKey="item_id"
       />
-      <Modal title="物品" open={vis} onCancel={hideModal} onOk={triggerSubmit}>
+      <Modal
+        title="物品"
+        open={vis}
+        onCancel={hideModal}
+        onOk={triggerSubmit}
+        destroyOnClose
+      >
         {renderForm()}
       </Modal>
     </>

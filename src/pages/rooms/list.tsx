@@ -55,6 +55,11 @@ function RoomsList() {
   function toDelete(id: IDType) {
     del(id)
       .unwrap()
+      .then(() => {
+        if (data?.data.length === 1 && page > 1) {
+          setPage((p) => p - 1);
+        }
+      })
       .catch((err) => handleRTKError(err, message));
   }
 
@@ -102,10 +107,19 @@ function RoomsList() {
             setPage(p);
             setSize(s);
           },
+          pageSize: size,
+          current: page,
+          total: data?.total,
         }}
         rowKey="room_id"
       />
-      <Modal title="房间" open={vis} onCancel={hideModal} onOk={triggerSubmit}>
+      <Modal
+        title="房间"
+        open={vis}
+        onCancel={hideModal}
+        onOk={triggerSubmit}
+        destroyOnClose
+      >
         {renderForm()}
       </Modal>
     </>

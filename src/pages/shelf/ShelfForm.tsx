@@ -51,10 +51,10 @@ function ShelfForm(props: Props, ref: Ref<SimpleForm>) {
           },
         ]}
       >
-        <Input disabled={isEditing} maxLength={20} showCount />
+        <Input maxLength={20} showCount />
       </Form.Item>
       <Form.Item name="layer" label="层数">
-        <InputNumber precision={0} min={1} disabled={isEditing} />
+        <InputNumber precision={0} min={1} />
       </Form.Item>
       <Form.Item name="room_id" label="房间">
         <Select />

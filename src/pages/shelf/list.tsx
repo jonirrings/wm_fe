@@ -10,6 +10,7 @@ import { IDType, SimpleForm } from "../../utils/types.ts";
 import { PlusOutlined } from "@ant-design/icons";
 import ShelfForm from "./ShelfForm.tsx";
 import { handleRTKError } from "../../utils/transformer.tsx";
+import SingleRoom from "../rooms/one.tsx";
 
 function ShelfList() {
   const modalFormRef = useRef<SimpleForm>(null);
@@ -32,16 +33,17 @@ function ShelfList() {
     {
       title: "名称",
       dataIndex: "name",
-    },
-    {
-      title: "房间",
-      dataIndex: "room_id",
-      width: 100,
+      width: 80,
     },
     {
       title: "层数",
       dataIndex: "layer",
       width: 80,
+    },
+    {
+      title: "房间",
+      dataIndex: "room_id",
+      render: (room_id: IDType) => <SingleRoom id={room_id} simple />,
     },
     {
       title: "操作",
@@ -60,6 +62,11 @@ function ShelfList() {
   function toDelete(id: IDType) {
     del(id)
       .unwrap()
+      .then(() => {
+        if (data?.data.length === 1 && page > 1) {
+          setPage((p) => p - 1);
+        }
+      })
       .catch((err) => handleRTKError(err, message));
   }
 
@@ -113,7 +120,13 @@ function ShelfList() {
         }}
         rowKey="shelf_id"
       />
-      <Modal title="货架" open={vis} onCancel={hideModal} onOk={triggerSubmit}>
+      <Modal
+        title="货架"
+        open={vis}
+        onCancel={hideModal}
+        onOk={triggerSubmit}
+        destroyOnClose
+      >
         {renderForm()}
       </Modal>
     </>

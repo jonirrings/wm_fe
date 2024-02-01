@@ -14,6 +14,12 @@ export function handleRTKError<T = any>(
       const r = data as ErrResult;
       return message.error(r.message);
     }
+    case 405: {
+      return message.error("Method Not Allowed");
+    }
+    case 408: {
+      return message.error("Request Timeout");
+    }
     case 417: {
       const r = data as ErrResult;
       return message.error(r.message);

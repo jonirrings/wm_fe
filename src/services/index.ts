@@ -44,9 +44,9 @@ type UserProfile = {
   avatar: string;
   updated_at?: string;
 };
-export type RoomPayload = {};
-export type ShelfPayload = {};
-export type ItemPayload = {};
+export type RoomPayload = Omit<BizRoom, "room_id">;
+export type ShelfPayload = Omit<BizShelf, "shelf_id">;
+export type ItemPayload = Omit<BizItem, "item_id">;
 export type BizRoom = {
   room_id: IDType;
   name: string;
@@ -102,9 +102,21 @@ export const api = createApi({
       providesTags: ["user"],
     }),
     readRooms: builder.query<Paged<BizRoom>, QParam>({
-      query: () => roomUrls.list,
+      query: (arg) => ({
+        url: roomUrls.list,
+        params: arg,
+      }),
       transformResponse: extractResp,
-      providesTags: ["room"],
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.data.map(({ room_id: id }) => ({
+                type: "room" as const,
+                id,
+              })),
+              "room",
+            ]
+          : ["room"],
     }),
     readRoom: builder.query<BizRoom, IDType>({
       query: (arg) => roomUrls.one + arg,
@@ -119,16 +131,27 @@ export const api = createApi({
         body: arg,
       }),
       transformResponse: extractResp,
-      invalidatesTags: ["room"],
+      invalidatesTags: (result) => (result ? ["room"] : []),
     }),
     updateRoom: builder.mutation<IDType, RoomPayload & { id: IDType }>({
+      query: (arg) => ({
+        url: roomUrls.one + arg.id,
+        method: "PUT",
+        body: arg,
+      }),
+      transformResponse: extractResp,
+      invalidatesTags: (result, _error, arg) =>
+        result ? [{ type: "room", id: arg.id }] : [],
+    }),
+    patchRoom: builder.mutation<IDType, Partial<RoomPayload> & { id: IDType }>({
       query: (arg) => ({
         url: roomUrls.one + arg.id,
         method: "PATCH",
         body: arg,
       }),
       transformResponse: extractResp,
-      invalidatesTags: ["room"],
+      invalidatesTags: (result, _error, arg) =>
+        result ? [{ type: "room", id: arg.id }] : [],
     }),
     deleteRoom: builder.mutation<IDType, IDType>({
       query: (arg) => ({
@@ -136,12 +159,24 @@ export const api = createApi({
         method: "DELETE",
       }),
       transformResponse: extractResp,
-      invalidatesTags: ["room"],
+      invalidatesTags: (result) => (result ? ["room"] : []),
     }),
     readShelves: builder.query<Paged<BizShelf>, QParam>({
-      query: () => shelfUrls.list,
+      query: (arg) => ({
+        url: shelfUrls.list,
+        params: arg,
+      }),
       transformResponse: extractResp,
-      providesTags: ["shelf"],
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.data.map(({ shelf_id: id }) => ({
+                type: "shelf" as const,
+                id,
+              })),
+              "shelf",
+            ]
+          : ["shelf"],
     }),
     readShelf: builder.query<BizShelf, IDType>({
       query: (arg) => shelfUrls.one + arg,
@@ -156,16 +191,30 @@ export const api = createApi({
         body: arg,
       }),
       transformResponse: extractResp,
-      invalidatesTags: ["shelf"],
+      invalidatesTags: (result) => (result ? ["shelf"] : []),
     }),
     updateShelf: builder.mutation<IDType, ShelfPayload & { id: IDType }>({
+      query: (arg) => ({
+        url: shelfUrls.one + arg.id,
+        method: "PUT",
+        body: arg,
+      }),
+      transformResponse: extractResp,
+      invalidatesTags: (result, _error, arg) =>
+        result ? [{ type: "shelf", id: arg.id }] : [],
+    }),
+    patchShelf: builder.mutation<
+      IDType,
+      Partial<ShelfPayload> & { id: IDType }
+    >({
       query: (arg) => ({
         url: shelfUrls.one + arg.id,
         method: "PATCH",
         body: arg,
       }),
       transformResponse: extractResp,
-      invalidatesTags: ["shelf"],
+      invalidatesTags: (result, _error, arg) =>
+        result ? [{ type: "shelf", id: arg.id }] : [],
     }),
     deleteShelf: builder.mutation<IDType, IDType>({
       query: (arg) => ({
@@ -173,12 +222,24 @@ export const api = createApi({
         method: "DELETE",
       }),
       transformResponse: extractResp,
-      invalidatesTags: ["shelf"],
+      invalidatesTags: (result) => (result ? ["shelf"] : []),
     }),
     readItems: builder.query<Paged<BizItem>, QParam>({
-      query: () => itemUrls.list,
+      query: (arg) => ({
+        url: itemUrls.list,
+        params: arg,
+      }),
       transformResponse: extractResp,
-      providesTags: ["item"],
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.data.map(({ item_id: id }) => ({
+                type: "item" as const,
+                id,
+              })),
+              "item",
+            ]
+          : ["item"],
     }),
     readItem: builder.query<BizItem, IDType>({
       query: (arg) => itemUrls.one + arg,
@@ -193,16 +254,27 @@ export const api = createApi({
         body: arg,
       }),
       transformResponse: extractResp,
-      invalidatesTags: ["item"],
+      invalidatesTags: (result) => (result ? ["item"] : []),
     }),
     updateItem: builder.mutation<IDType, ItemPayload & { id: IDType }>({
+      query: (arg) => ({
+        url: itemUrls.one + arg.id,
+        method: "PUT",
+        body: arg,
+      }),
+      transformResponse: extractResp,
+      invalidatesTags: (result, _error, arg) =>
+        result ? [{ type: "item", id: arg.id }] : [],
+    }),
+    patchItem: builder.mutation<IDType, Partial<ItemPayload> & { id: IDType }>({
       query: (arg) => ({
         url: itemUrls.one + arg.id,
         method: "PATCH",
         body: arg,
       }),
       transformResponse: extractResp,
-      invalidatesTags: ["item"],
+      invalidatesTags: (result, _error, arg) =>
+        result ? [{ type: "item", id: arg.id }] : [],
     }),
     deleteItem: builder.mutation<IDType, IDType>({
       query: (arg) => ({
@@ -210,7 +282,7 @@ export const api = createApi({
         method: "DELETE",
       }),
       transformResponse: extractResp,
-      invalidatesTags: ["item"],
+      invalidatesTags: (result) => (result ? ["item"] : []),
     }),
   }),
 });

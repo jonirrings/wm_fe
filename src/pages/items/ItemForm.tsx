@@ -51,8 +51,8 @@ function ShelfForm(props: Props, ref: Ref<SimpleForm>) {
           },
         ]}
       >
-        <Input disabled={isEditing} maxLength={20} showCount />
-      </Form.Item>{" "}
+        <Input maxLength={20} showCount />
+      </Form.Item>
       <Form.Item
         name="sn"
         label="序号"
@@ -64,7 +64,7 @@ function ShelfForm(props: Props, ref: Ref<SimpleForm>) {
           },
         ]}
       >
-        <Input disabled={isEditing} maxLength={20} showCount />
+        <Input maxLength={20} showCount />
       </Form.Item>
       <Form.Item name="description" label="描述">
         <Input.TextArea rows={4} maxLength={400} showCount />
