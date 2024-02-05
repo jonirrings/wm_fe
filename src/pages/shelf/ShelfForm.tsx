@@ -1,13 +1,13 @@
 import { forwardRef, Ref, useImperativeHandle } from "react";
-import { IDType, SFProps, SimpleForm } from "../../utils/types.ts";
+import { IDType, SFProps, SimpleForm } from "../../utils/types";
 import {
   BizShelf,
   ShelfPayload,
   useCreateShelfMutation,
   useUpdateShelfMutation,
-} from "../../services";
+} from "../../services/shelf";
 import { App, Form, Input, InputNumber, Select } from "antd";
-import { handleRTKError } from "../../utils/transformer.tsx";
+import { handleRTKError } from "../../utils/transformer";
 
 type Props = SFProps<BizShelf>;
 

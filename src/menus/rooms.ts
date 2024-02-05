@@ -1,4 +1,4 @@
-import { SideMenu } from "../utils/types.ts";
+import { SideMenu } from "../utils/types";
 
 export const rooms: SideMenu = {
   label: "房间",

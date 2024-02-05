@@ -1,4 +1,4 @@
-import { TOKEN } from "../utils/constants.ts";
+import { TOKEN } from "../utils/constants";
 import { setRawLocal, getRawLocal, removeLocal } from "../utils/local";
 
 /**

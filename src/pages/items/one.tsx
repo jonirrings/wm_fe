@@ -1,5 +1,5 @@
-import { SingleProps } from "../../utils/types.ts";
-import { useReadItemQuery } from "../../services";
+import { SingleProps } from "../../utils/types";
+import { useReadItemQuery } from "../../services/item";
 import { Skeleton, Typography } from "antd";
 
 function SingleItem(props: SingleProps) {

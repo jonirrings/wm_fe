@@ -1,10 +1,10 @@
 import { App, Button, Form, Input, Space } from "antd";
-import { LoginPayload, useLoginMutation } from "../../services";
+import { LoginPayload, useLoginMutation } from "../../services/user";
 import { Link, useNavigate } from "react-router-dom";
-import { handleRTKError } from "../../utils/transformer.tsx";
-import { useToken } from "../../hooks/useToken.ts";
+import { handleRTKError } from "../../utils/transformer";
+import { useToken } from "../../hooks/useToken";
 import { useEffect } from "react";
-import { getFirstRoute } from "../../menus/utils/helper.ts";
+import { getFirstRoute } from "../../menus/utils/helper";
 import { defaultMenus } from "../../menus";
 
 function Login() {

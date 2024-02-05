@@ -1,19 +1,19 @@
-import type { RouteObject } from 'react-router-dom';
+import type { RouteObject } from "react-router-dom";
 import type { DefaultComponent } from "@loadable/component";
-import { Skeleton } from 'antd';
-import loadable from '@loadable/component';
+import { Skeleton } from "antd";
+import loadable from "@loadable/component";
 
 // 生成路由排除内容，不带后缀名转换成“/文件名/”格式
 export const ROUTER_EXCLUDE = [
-  'login',
-  'components',
-  'utils',
-  'lib',
-  'hooks',
-  'tests',
-  '__test__',
-  'model.tsx',
-  '[...all].tsx'
+  "login",
+  "components",
+  "utils",
+  "lib",
+  "hooks",
+  "tests",
+  "__test__",
+  "model",
+  "[...all]",
 ];
 
 /**
@@ -26,7 +26,7 @@ export function layoutRoutes(routes: RouteObject[]): RouteObject[] {
   for (let i = 0; i < routes.length; i++) {
     const { path } = routes[i];
     // 路径为登录页不添加layouts
-    if (path !== 'login') {
+    if (path !== "login") {
       layouts.push(routes[i]);
     }
   }
@@ -38,7 +38,9 @@ export function layoutRoutes(routes: RouteObject[]): RouteObject[] {
  * 处理路由
  * @param routes - 路由数据
  */
-export function handleRoutes(routes: Record<string, () => Promise<DefaultComponent<unknown>>>): RouteObject[] {
+export function handleRoutes(
+  routes: Record<string, () => Promise<DefaultComponent<unknown>>>,
+): RouteObject[] {
   const layouts: RouteObject[] = []; // layout内部组件
 
   for (const key in routes) {
@@ -47,19 +49,15 @@ export function handleRoutes(routes: Record<string, () => Promise<DefaultCompone
     if (isExclude) continue;
 
     const path = getRouterPage(key);
-    if (path === '/login') continue;
+    if (path === "/login") continue;
 
     const ComponentNode = loadable(routes[key], {
-      fallback: <Skeleton
-        active
-        className='p-30px'
-        paragraph={{ rows: 10 }}
-       />
+      fallback: <Skeleton active className="p-30px" paragraph={{ rows: 10 }} />,
     });
 
     layouts.push({
       path,
-      element: <ComponentNode />
+      element: <ComponentNode />,
     });
   }
 
@@ -75,7 +73,7 @@ function handleRouterExclude(path: string): boolean {
     let item = ROUTER_EXCLUDE[i];
 
     // 如果不是文件类型则转为文件夹
-    if (!item.includes('.')) {
+    if (!item.includes(".")) {
       item = `/${item}/`;
     }
 
@@ -91,18 +89,18 @@ function handleRouterExclude(path: string): boolean {
  */
 function getRouterPage(path: string): string {
   // 获取page数据后面数据
-  const pageIndex = path.indexOf('pages') + 5;
+  const pageIndex = path.indexOf("pages") + 5;
   // 文件后缀
-  const lastIndex = path.lastIndexOf('.');
+  const lastIndex = path.lastIndexOf(".");
   // 去除pages和文件后缀
   let result = path.substring(pageIndex, lastIndex);
 
   // 如果是首页则直接返回/
-  if (result === '/index') return '/';
+  if (result === "/index") return "/";
 
   // 如果结尾是index则去除
-  if (result.includes('index')) {
-    const indexIdx = result.lastIndexOf('index') + 5;
+  if (result.includes("index")) {
+    const indexIdx = result.lastIndexOf("index") + 5;
     if (indexIdx === result.length) {
       result = result.substring(0, result.length - 6);
     }

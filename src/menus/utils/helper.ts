@@ -1,4 +1,4 @@
-import { SideMenu } from "../../utils/types.ts";
+import { SideMenu } from "../../utils/types";
 
 /**
  * 根据路由获取展开菜单数组

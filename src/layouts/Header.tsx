@@ -1,5 +1,5 @@
 import { Avatar, Skeleton } from "antd";
-import { useMeQuery } from "../services";
+import { useMeQuery } from "../services/user";
 import { UserOutlined } from "@ant-design/icons";
 
 function Header() {

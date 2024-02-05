@@ -1,5 +1,5 @@
-import { SingleProps } from "../../utils/types.ts";
-import { useReadRoomQuery } from "../../services";
+import { SingleProps } from "../../utils/types";
+import { useReadRoomQuery } from "../../services/room";
 import { Skeleton, Typography } from "antd";
 
 type Props = SingleProps & { simple?: boolean };

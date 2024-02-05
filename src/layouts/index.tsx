@@ -1,11 +1,11 @@
-import { useToken } from "../hooks/useToken.ts";
+import { useToken } from "../hooks/useToken";
 import { useNavigate, useOutlet } from "react-router-dom";
 // import { AppDispatch, useAppDispatch } from "../stores";
 import { useEffect } from "react";
 import { Layout } from "antd";
-import Header from "./Header.tsx";
-import Footer from "./Footer.tsx";
-import Menus from "./Menus.tsx";
+import Header from "./Header";
+import Footer from "./Footer";
+import Menus from "./Menus";
 
 function Layouts() {
   // const dispatch: AppDispatch = useAppDispatch();

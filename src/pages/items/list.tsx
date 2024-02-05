@@ -2,14 +2,14 @@ import {
   BizItem,
   useDeleteItemMutation,
   useReadItemsQuery,
-} from "../../services";
+} from "../../services/item";
 import { useRef, useState } from "react";
 import { App, Button, Modal, Space, Table, Typography } from "antd";
 import { ColumnsType } from "antd/es/table";
 import { PlusOutlined } from "@ant-design/icons";
-import ItemForm from "./ItemForm.tsx";
-import { IDType, SimpleForm } from "../../utils/types.ts";
-import { handleRTKError } from "../../utils/transformer.tsx";
+import ItemForm from "./ItemForm";
+import { IDType, SimpleForm } from "../../utils/types";
+import { handleRTKError } from "../../utils/transformer";
 
 function ItemsList() {
   const modalFormRef = useRef<SimpleForm>(null);

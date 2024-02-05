@@ -1,6 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { useDispatch } from "react-redux";
-import { publicSlice } from "./public.ts";
+import { publicSlice } from "./public";
 import { userSlice } from "./user";
 import { api } from "../services";
 

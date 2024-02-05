@@ -2,15 +2,15 @@ import {
   BizShelf,
   useDeleteShelfMutation,
   useReadShelvesQuery,
-} from "../../services";
+} from "../../services/shelf";
 import { useRef, useState } from "react";
 import { App, Button, Modal, Space, Table, Typography } from "antd";
 import { ColumnsType } from "antd/es/table";
-import { IDType, SimpleForm } from "../../utils/types.ts";
+import { IDType, SimpleForm } from "../../utils/types";
 import { PlusOutlined } from "@ant-design/icons";
-import ShelfForm from "./ShelfForm.tsx";
-import { handleRTKError } from "../../utils/transformer.tsx";
-import SingleRoom from "../rooms/one.tsx";
+import ShelfForm from "./ShelfForm";
+import { handleRTKError } from "../../utils/transformer";
+import SingleRoom from "../rooms/one";
 
 function ShelfList() {
   const modalFormRef = useRef<SimpleForm>(null);

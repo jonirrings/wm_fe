@@ -1,6 +1,6 @@
 import { FormInstance } from "antd";
 import { MessageInstance } from "antd/es/message/interface";
-import { ErrResult, Result, RTKError } from "./types.ts";
+import { ErrResult, Result, RTKError } from "./types";
 
 export function handleRTKError<T = any>(
   err: RTKError<T>,

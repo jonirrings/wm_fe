@@ -2,14 +2,14 @@ import {
   BizRoom,
   useDeleteRoomMutation,
   useReadRoomsQuery,
-} from "../../services";
+} from "../../services/room";
 import { useRef, useState } from "react";
 import { App, Button, Modal, Space, Table, Typography } from "antd";
 import { ColumnsType } from "antd/es/table";
 import { PlusOutlined } from "@ant-design/icons";
-import RoomForm from "./RoomForm.tsx";
-import { IDType, SimpleForm } from "../../utils/types.ts";
-import { handleRTKError } from "../../utils/transformer.tsx";
+import RoomForm from "./RoomForm";
+import { IDType, SimpleForm } from "../../utils/types";
+import { handleRTKError } from "../../utils/transformer";
 
 function RoomsList() {
   const modalFormRef = useRef<SimpleForm>(null);

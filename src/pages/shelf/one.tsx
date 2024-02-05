@@ -1,5 +1,5 @@
-import { SingleProps } from "../../utils/types.ts";
-import { useReadShelfQuery } from "../../services";
+import { SingleProps } from "../../utils/types";
+import { useReadShelfQuery } from "../../services/shelf";
 import { Skeleton, Typography } from "antd";
 
 function SingleShelf(props: SingleProps) {

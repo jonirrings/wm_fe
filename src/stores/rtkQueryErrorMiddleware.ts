@@ -1,11 +1,11 @@
 import { isRejectedWithValue } from "@reduxjs/toolkit";
 import type { MiddlewareAPI, Middleware } from "@reduxjs/toolkit";
 import { message } from "antd";
-import { debounce } from "lodash";
-import { ErrResult, RTKError, VFunc } from "../utils/types.ts";
+import { debounce, get } from "lodash";
+import { ErrResult, RTKError, VFunc } from "../utils/types";
 import { api } from "../services";
-import { TOKEN } from "../utils/constants.ts";
-import { removeLocal } from "../utils/local.ts";
+import { TOKEN } from "../utils/constants";
+import { removeLocal } from "../utils/local";
 
 const handle401 = debounce(
   function (data: ErrResult, cb: VFunc) {
@@ -20,6 +20,7 @@ const rtkQueryErrorMiddleware: Middleware =
     // RTK Query uses `createAsyncThunk` from redux-toolkit under the hood, so we're able to utilize these matchers!
     if (isRejectedWithValue(action)) {
       const payload = action.payload as any;
+      const meta = action.meta;
       if ("status" in payload && "data" in payload) {
         const { status } = payload;
         switch (status) {
@@ -34,6 +35,12 @@ const rtkQueryErrorMiddleware: Middleware =
             });
             break;
           default:
+            const method = get(meta, ["baseQueryMeta", "request", "method"]);
+            if (method === "GET") {
+              // for initial fetch in page
+              const { data } = payload as RTKError<ErrResult>;
+              message.error(data.message);
+            }
             console.warn("We got a rejected action!", action.error);
         }
       }

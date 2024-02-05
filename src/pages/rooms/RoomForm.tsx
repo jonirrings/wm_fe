@@ -1,13 +1,13 @@
 import { forwardRef, Ref, useImperativeHandle } from "react";
-import { IDType, SFProps, SimpleForm } from "../../utils/types.ts";
+import { IDType, SFProps, SimpleForm } from "../../utils/types";
 import {
   BizRoom,
   RoomPayload,
   useCreateRoomMutation,
   useUpdateRoomMutation,
-} from "../../services";
+} from "../../services/room";
 import { App, Form, Input } from "antd";
-import { handleRTKError } from "../../utils/transformer.tsx";
+import { handleRTKError } from "../../utils/transformer";
 
 type Props = SFProps<BizRoom>;
 

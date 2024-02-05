@@ -10,7 +10,7 @@ import Register from "../pages/register";
 import NotFound from "../pages/NotFound";
 import zhCN from "antd/es/locale/zh_CN";
 
-const pages = import.meta.glob("../pages/**/*.tsx") as Record<
+const pages = import.meta.glob("../pages/**/*") as Record<
   string,
   () => Promise<DefaultComponent<unknown>>
 >;
