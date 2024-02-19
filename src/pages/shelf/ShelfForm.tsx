@@ -8,12 +8,14 @@ import {
 } from "../../services/shelf";
 import { App, Form, Input, InputNumber, Select } from "antd";
 import { handleRTKError } from "../../utils/transformer";
+import { useReadRoomsQuery } from "../../services/room.ts";
 
 type Props = SFProps<BizShelf>;
 
 function ShelfForm(props: Props, ref: Ref<SimpleForm>) {
   const { draft, onSuccess } = props;
   const [formRef] = Form.useForm<ShelfPayload>();
+  const { data: rooms, isLoading } = useReadRoomsQuery({});
   const [create] = useCreateShelfMutation();
   const [update] = useUpdateShelfMutation();
   const { message } = App.useApp();
@@ -57,7 +59,14 @@ function ShelfForm(props: Props, ref: Ref<SimpleForm>) {
         <InputNumber precision={0} min={1} />
       </Form.Item>
       <Form.Item name="room_id" label="房间">
-        <Select />
+        <Select
+          loading={isLoading}
+          options={rooms?.data.map((r) => ({
+            label: r.name,
+            value: r.room_id,
+          }))}
+          showSearch
+        />
       </Form.Item>
     </Form>
   );

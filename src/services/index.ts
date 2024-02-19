@@ -13,6 +13,6 @@ export const api = createApi({
       }
     },
   }),
-  tagTypes: ["user", "room", "shelf", "item"],
+  tagTypes: ["user", "room", "shelf", "item", "stock"],
   endpoints: (_builder) => ({}),
 });

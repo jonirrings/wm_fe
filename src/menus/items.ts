@@ -5,10 +5,6 @@ export const items: SideMenu = {
   key: "/items",
   children: [
     {
-      label: "操作",
-      key: "/items/ops",
-    },
-    {
       label: "列表",
       key: "/items/list",
     },
