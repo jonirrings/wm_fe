@@ -1,7 +1,7 @@
 import { Button, Form, InputNumber, Select, SelectProps, Space } from "antd";
-import { useReadItemsQuery } from "../../services/item.ts";
-import { initialAction, OpsAction, renderAction } from "./utils.tsx";
-import { useReadShelvesQuery } from "../../services/shelf.ts";
+import { useReadItemsQuery } from "../../services/item";
+import { initialAction, OpsAction, renderAction } from "./utils";
+import { useReadShelvesQuery } from "../../services/shelf";
 
 function ItemTab() {
   const [formRef] = Form.useForm();

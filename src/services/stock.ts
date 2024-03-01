@@ -1,6 +1,6 @@
 import { api } from "./index";
-import { IDType, Paged, QParam, Result } from "../utils/types.ts";
-import { extractResp } from "../utils/transformer.tsx";
+import { IDType, Paged, QParam, Result } from "../utils/types";
+import { extractResp } from "../utils/transformer";
 
 const stockUrls = {
   stock: "/stock",
@@ -41,7 +41,7 @@ const extendedApi = api.injectEndpoints({
         params: arg,
       }),
       transformResponse: extractResp,
-      providesTags: ["stock", "room", "shelf"],
+      providesTags: ["stock"],
     }),
     incStock: builder.mutation<Result<null>, BizItemsOnShelf>({
       query: (arg) => ({

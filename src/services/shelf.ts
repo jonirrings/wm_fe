@@ -1,5 +1,5 @@
 import { api } from "./index";
-import { IDType, Paged, QParam } from "../utils/types";
+import { BatchResult, IDType, Paged, QParam } from "../utils/types";
 import { extractResp } from "../utils/transformer";
 
 const shelfUrls = {
@@ -17,22 +17,21 @@ export type BizShelf = {
 
 const extendedApi = api.injectEndpoints({
   endpoints: (builder) => ({
-    readShelves: builder.query<Paged<BizShelf>, QParam>({
+    readAllShelves: builder.query<BizShelf[], null>({
+      query: () => ({
+        url: shelfUrls.list,
+        params: { all: true },
+      }),
+      transformResponse: extractResp,
+      providesTags: (result) => (result ? [{ type: "shelf", id: "LIST" }] : []),
+    }),
+    readShelves: builder.query<Paged<BizShelf>, QParam & { room_id?: IDType }>({
       query: (arg) => ({
         url: shelfUrls.list,
         params: arg,
       }),
       transformResponse: extractResp,
-      providesTags: (result) =>
-        result
-          ? [
-              ...result.data.map(({ shelf_id: id }) => ({
-                type: "shelf" as const,
-                id,
-              })),
-              "shelf",
-            ]
-          : ["shelf"],
+      providesTags: (result) => (result ? [{ type: "shelf", id: "LIST" }] : []),
     }),
     readShelf: builder.query<BizShelf, IDType>({
       query: (arg) => shelfUrls.one + arg,
@@ -80,6 +79,15 @@ const extendedApi = api.injectEndpoints({
       transformResponse: extractResp,
       invalidatesTags: (result) => (result ? ["shelf"] : []),
     }),
+    deleteShelves: builder.mutation<BatchResult, IDType[]>({
+      query: (arg) => ({
+        url: shelfUrls.list,
+        method: "DELETE",
+        body: arg,
+      }),
+      transformResponse: extractResp,
+      invalidatesTags: (result) => (result ? ["item"] : []),
+    }),
   }),
 });
 
@@ -89,4 +97,5 @@ export const {
   useCreateShelfMutation,
   useUpdateShelfMutation,
   useDeleteShelfMutation,
+  useDeleteShelvesMutation,
 } = extendedApi;

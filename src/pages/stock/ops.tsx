@@ -1,7 +1,7 @@
 import { Tabs, TabsProps } from "antd";
-import ItemTab from "./ItemTab.tsx";
-import ShelfTab from "./ShelfTab.tsx";
-import ConvertTab from "./ConvertTab.tsx";
+import ItemTab from "./ItemTab";
+import ShelfTab from "./ShelfTab";
+import ConvertTab from "./ConvertTab";
 
 function ItemOps() {
   const items: TabsProps["items"] = [

@@ -1,38 +1,49 @@
 import {
   BizRoom,
   useDeleteRoomMutation,
+  useDeleteRoomsMutation,
   useReadRoomsQuery,
 } from "../../services/room";
-import { useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { App, Button, Modal, Space, Table, Typography } from "antd";
 import { ColumnsType } from "antd/es/table";
 import { PlusOutlined } from "@ant-design/icons";
 import RoomForm from "./RoomForm";
 import { IDType, SimpleForm } from "../../utils/types";
-import { handleRTKError } from "../../utils/transformer";
+import { handleBatchResult, handleRTKError } from "../../utils/transformer";
+import usePager from "../../hooks/usePager";
+import useMF from "../../hooks/useMF";
+import useRowSelection from "../../hooks/useRowSelection";
 
-function RoomsList() {
+function RoomList() {
   const modalFormRef = useRef<SimpleForm>(null);
-  const [page, setPage] = useState(1);
-  const [size, setSize] = useState(10);
-  const [draft, setDraft] = useState<BizRoom>();
-  const [vis, setVis] = useState(false);
-  const [del] = useDeleteRoomMutation();
-  const { message } = App.useApp();
+  const [{ page, size, sort }, pager] = usePager();
+  const [mf, mfOps] = useMF<BizRoom>();
+  const [rs, rsOps] = useRowSelection<BizRoom>("room_id");
+  const [delOne] = useDeleteRoomMutation();
+  const [delMany, { isLoading: deletingMany }] = useDeleteRoomsMutation();
+  const { message, modal } = App.useApp();
   const { data, isLoading } = useReadRoomsQuery({
+    sort,
     limit: size,
     offset: (page - 1) * size,
   });
+  useEffect(() => {
+    if (page > 1 && (!data || data.data.length === 0)) pager.prev();
+  }, [data]);
   const cols: ColumnsType<BizRoom> = [
     {
       title: "ID",
       dataIndex: "room_id",
+      key: "id",
       width: 80,
+      sorter: true,
     },
     {
       title: "名称",
       dataIndex: "name",
       width: 100,
+      sorter: true,
     },
     {
       title: "描述",
@@ -45,7 +56,9 @@ function RoomsList() {
       width: 200,
       render: (id: IDType, row) => (
         <Space>
-          <Typography.Link onClick={() => toEdit(row)}>编辑</Typography.Link>
+          <Typography.Link onClick={() => mfOps.toEdit(id, row)}>
+            编辑
+          </Typography.Link>
           <Typography.Link onClick={() => toDelete(id)}>删除</Typography.Link>
         </Space>
       ),
@@ -53,29 +66,23 @@ function RoomsList() {
   ];
 
   function toDelete(id: IDType) {
-    del(id)
+    delOne(id)
       .unwrap()
       .then(() => {
-        if (data?.data.length === 1 && page > 1) {
-          setPage((p) => p - 1);
-        }
+        rsOps.remove(id);
+        return message.success("删除成功");
       })
       .catch((err) => handleRTKError(err, message));
   }
 
-  function toCreate() {
-    setDraft(undefined);
-    setVis(true);
-  }
-
-  function toEdit(d: BizRoom) {
-    setDraft(d);
-    setVis(true);
-  }
-
-  function hideModal() {
-    setDraft(undefined);
-    setVis(false);
+  function batchDel() {
+    delMany(rs.selectedKeys)
+      .unwrap()
+      .then((r) => {
+        handleBatchResult(r, modal, message);
+        rsOps.reset();
+      })
+      .catch((err) => handleRTKError(err, message));
   }
 
   function triggerSubmit() {
@@ -83,9 +90,13 @@ function RoomsList() {
   }
 
   function renderForm() {
-    if (vis) {
+    if (mf.vis) {
       return (
-        <RoomForm ref={modalFormRef} draft={draft} onSuccess={hideModal} />
+        <RoomForm
+          ref={modalFormRef}
+          draft={mf.draft}
+          onSuccess={mfOps.toHide}
+        />
       );
     }
     return null;
@@ -94,7 +105,14 @@ function RoomsList() {
   return (
     <>
       <div>
-        <Button icon={<PlusOutlined />} onClick={toCreate}>
+        <Button
+          loading={deletingMany}
+          disabled={rs.selectedKeys.length === 0}
+          onClick={batchDel}
+        >
+          批量删除
+        </Button>
+        <Button icon={<PlusOutlined />} onClick={mfOps.toCreate}>
           新增
         </Button>
       </div>
@@ -102,11 +120,10 @@ function RoomsList() {
         columns={cols}
         dataSource={data?.data}
         loading={isLoading}
+        rowSelection={rs.rowSelection}
+        onChange={pager.onPFSChange}
         pagination={{
-          onChange: (p, s) => {
-            setPage(p);
-            setSize(s);
-          },
+          onChange: pager.onChange,
           pageSize: size,
           current: page,
           total: data?.total,
@@ -114,9 +131,9 @@ function RoomsList() {
         rowKey="room_id"
       />
       <Modal
-        title="房间"
-        open={vis}
-        onCancel={hideModal}
+        title={mf.text + "房间"}
+        open={mf.vis}
+        onCancel={mfOps.toHide}
         onOk={triggerSubmit}
         destroyOnClose
       >
@@ -126,4 +143,4 @@ function RoomsList() {
   );
 }
 
-export default RoomsList;
+export default RoomList;

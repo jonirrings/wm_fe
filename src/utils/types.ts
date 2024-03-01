@@ -9,8 +9,18 @@ export type SideMenu = {
   children?: SideMenu[];
 };
 
+type Failure = {
+  name: string;
+  reason: string;
+};
+export type BatchResult = {
+  s: number;
+  f?: Failure[];
+};
+
 export type Result<T = any> = {
   data: T;
+  message: string;
 };
 export type Paged<T = any> = {
   total: number;

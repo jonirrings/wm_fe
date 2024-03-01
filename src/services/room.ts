@@ -1,5 +1,5 @@
 import { api } from "./index";
-import { IDType, Paged, QParam } from "../utils/types";
+import { BatchResult, IDType, Paged, QParam } from "../utils/types";
 import { extractResp } from "../utils/transformer";
 
 const roomUrls = {
@@ -15,22 +15,21 @@ export type BizRoom = {
 };
 const extendedApi = api.injectEndpoints({
   endpoints: (builder) => ({
+    readAllRooms: builder.query<BizRoom[], null>({
+      query: () => ({
+        url: roomUrls.list,
+        params: { all: true },
+      }),
+      transformResponse: extractResp,
+      providesTags: (result) => (result ? [{ type: "room", id: "LIST" }] : []),
+    }),
     readRooms: builder.query<Paged<BizRoom>, QParam>({
       query: (arg) => ({
         url: roomUrls.list,
         params: arg,
       }),
       transformResponse: extractResp,
-      providesTags: (result) =>
-        result
-          ? [
-              ...result.data.map(({ room_id: id }) => ({
-                type: "room" as const,
-                id,
-              })),
-              "room",
-            ]
-          : ["room"],
+      providesTags: (result) => (result ? [{ type: "room", id: "LIST" }] : []),
     }),
     readRoom: builder.query<BizRoom, IDType>({
       query: (arg) => roomUrls.one + arg,
@@ -75,13 +74,24 @@ const extendedApi = api.injectEndpoints({
       transformResponse: extractResp,
       invalidatesTags: (result) => (result ? ["room"] : []),
     }),
+    deleteRooms: builder.mutation<BatchResult, IDType[]>({
+      query: (arg) => ({
+        url: roomUrls.list,
+        method: "DELETE",
+        body: arg,
+      }),
+      transformResponse: extractResp,
+      invalidatesTags: (result) => (result ? ["item"] : []),
+    }),
   }),
 });
 
 export const {
+  useReadAllRoomsQuery,
   useReadRoomsQuery,
   useReadRoomQuery,
   useCreateRoomMutation,
   useUpdateRoomMutation,
   useDeleteRoomMutation,
+  useDeleteRoomsMutation,
 } = extendedApi;

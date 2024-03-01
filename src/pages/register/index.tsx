@@ -25,9 +25,9 @@ function Register() {
   function onFinish(values: RegisterPayload) {
     register(values)
       .unwrap()
-      .then((resp) => {
+      .then(() => {
         navigate("/login");
-        return message.success(`注册成功，用户id：${resp.data}`);
+        return message.success(`注册成功`);
       })
       .catch((err) => handleRTKError(err, message));
   }

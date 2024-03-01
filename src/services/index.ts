@@ -13,6 +13,8 @@ export const api = createApi({
       }
     },
   }),
+  keepUnusedDataFor: 5,
+  //todo: websocket required to notify server side change
   tagTypes: ["user", "room", "shelf", "item", "stock"],
   endpoints: (_builder) => ({}),
 });

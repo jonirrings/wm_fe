@@ -8,8 +8,8 @@ import {
   SelectProps,
   Space,
 } from "antd";
-import { useReadItemsQuery } from "../../services/item.ts";
-import { useReadShelvesQuery } from "../../services/shelf.ts";
+import { useReadItemsQuery } from "../../services/item";
+import { useReadShelvesQuery } from "../../services/shelf";
 import { MinusOutlined, PlusOutlined } from "@ant-design/icons";
 
 const initialValues = {

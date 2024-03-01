@@ -1,5 +1,5 @@
 import { api } from "./index";
-import { IDType, Paged, QParam } from "../utils/types";
+import { BatchResult, IDType, Paged, QParam } from "../utils/types";
 import { extractResp } from "../utils/transformer";
 
 const itemUrls = {
@@ -18,22 +18,21 @@ export type BizItem = {
 
 const extendedApi = api.injectEndpoints({
   endpoints: (builder) => ({
+    readAllItems: builder.query<BizItem[], null>({
+      query: () => ({
+        url: itemUrls.list,
+        params: { all: true },
+      }),
+      transformResponse: extractResp,
+      providesTags: (result) => (result ? [{ type: "item", id: "ALL" }] : []),
+    }),
     readItems: builder.query<Paged<BizItem>, QParam>({
       query: (arg) => ({
         url: itemUrls.list,
         params: arg,
       }),
       transformResponse: extractResp,
-      providesTags: (result) =>
-        result
-          ? [
-              ...result.data.map(({ item_id: id }) => ({
-                type: "item" as const,
-                id,
-              })),
-              "item",
-            ]
-          : ["item"],
+      providesTags: (result) => (result ? [{ type: "item", id: "LIST" }] : []),
     }),
     readItem: builder.query<BizItem, IDType>({
       query: (arg) => itemUrls.one + arg,
@@ -78,6 +77,15 @@ const extendedApi = api.injectEndpoints({
       transformResponse: extractResp,
       invalidatesTags: (result) => (result ? ["item"] : []),
     }),
+    deleteItems: builder.mutation<BatchResult, IDType[]>({
+      query: (arg) => ({
+        url: itemUrls.list,
+        method: "DELETE",
+        body: arg,
+      }),
+      transformResponse: extractResp,
+      invalidatesTags: (result) => (result ? ["item"] : []),
+    }),
   }),
 });
 
@@ -87,4 +95,5 @@ export const {
   useCreateItemMutation,
   useUpdateItemMutation,
   useDeleteItemMutation,
+  useDeleteItemsMutation,
 } = extendedApi;
