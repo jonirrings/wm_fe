@@ -46,6 +46,7 @@ export type SimpleForm = {
 export type SFProps<T> = {
   draft?: T;
   onSuccess: VFunc;
+  onLoading: VFunc;
 };
 
 export type SingleProps = {

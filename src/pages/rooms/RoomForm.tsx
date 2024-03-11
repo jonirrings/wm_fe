@@ -1,4 +1,4 @@
-import { forwardRef, Ref, useImperativeHandle } from "react";
+import { forwardRef, Ref, useEffect, useImperativeHandle } from "react";
 import { IDType, SFProps, SimpleForm } from "../../utils/types";
 import {
   BizRoom,
@@ -12,12 +12,16 @@ import { handleRTKError } from "../../utils/transformer";
 type Props = SFProps<BizRoom>;
 
 function RoomForm(props: Props, ref: Ref<SimpleForm>) {
-  const { draft, onSuccess } = props;
+  const { draft, onSuccess, onLoading } = props;
   const [formRef] = Form.useForm<RoomPayload>();
-  const [create] = useCreateRoomMutation();
-  const [update] = useUpdateRoomMutation();
+  const [create, { isLoading: creating }] = useCreateRoomMutation();
+  const [update, { isLoading: updating }] = useUpdateRoomMutation();
   const { message } = App.useApp();
   const isEditing = !!draft;
+  const loading = creating || updating;
+  useEffect(() => {
+    onLoading(loading);
+  }, [loading]);
   useImperativeHandle(ref, () => ({
     submit: () => formRef.submit(),
   }));

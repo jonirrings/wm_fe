@@ -1,11 +1,12 @@
+import type { Middleware, MiddlewareAPI } from "@reduxjs/toolkit";
 import { isRejectedWithValue } from "@reduxjs/toolkit";
-import type { MiddlewareAPI, Middleware } from "@reduxjs/toolkit";
 import { message } from "antd";
 import { debounce, get } from "lodash";
 import { ErrResult, RTKError, VFunc } from "../utils/types";
 import { api } from "../services";
 import { TOKEN } from "../utils/constants";
 import { removeLocal } from "../utils/local";
+import { handleRTKError } from "../utils/transformer";
 
 const handle401 = debounce(
   function (data: ErrResult, cb: VFunc) {
@@ -29,17 +30,16 @@ const rtkQueryErrorMiddleware: Middleware =
             handle401(data, () => {
               mApi.dispatch(api.util?.invalidateTags(["user"]));
               removeLocal(TOKEN);
-              setTimeout(() => {
+              /*setTimeout(() => {
                 window.location.href = "/";
-              }, 1000);
+              }, 1000);*/
             });
             break;
           default:
             const method = get(meta, ["baseQueryMeta", "request", "method"]);
             if (method === "GET") {
               // for initial fetch in page
-              const { data } = payload as RTKError<ErrResult>;
-              message.error(data.message);
+              handleRTKError(payload, message);
             }
             console.warn("We got a rejected action!", action.error);
         }

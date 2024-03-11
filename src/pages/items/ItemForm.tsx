@@ -1,4 +1,4 @@
-import { forwardRef, Ref, useImperativeHandle } from "react";
+import { forwardRef, Ref, useEffect, useImperativeHandle } from "react";
 import { IDType, SFProps, SimpleForm } from "../../utils/types";
 import {
   BizItem,
@@ -12,12 +12,17 @@ import { handleRTKError } from "../../utils/transformer";
 type Props = SFProps<BizItem>;
 
 function ShelfForm(props: Props, ref: Ref<SimpleForm>) {
-  const { draft, onSuccess } = props;
+  const { draft, onSuccess, onLoading } = props;
   const [formRef] = Form.useForm<ItemPayload>();
-  const [create] = useCreateItemMutation();
-  const [update] = useUpdateItemMutation();
+  const [create, { isLoading: creating }] = useCreateItemMutation();
+  const [update, { isLoading: updating }] = useUpdateItemMutation();
   const { message } = App.useApp();
+  const loading = creating || updating;
   const isEditing = !!draft;
+
+  useEffect(() => {
+    onLoading(loading);
+  }, [loading]);
   useImperativeHandle(ref, () => ({
     submit: () => formRef.submit(),
   }));

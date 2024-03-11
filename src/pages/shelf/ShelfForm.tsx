@@ -1,4 +1,4 @@
-import { forwardRef, Ref, useImperativeHandle } from "react";
+import { forwardRef, Ref, useEffect, useImperativeHandle } from "react";
 import { IDType, SFProps, SimpleForm } from "../../utils/types";
 import {
   BizShelf,
@@ -13,13 +13,17 @@ import { useReadAllRoomsQuery } from "../../services/room";
 type Props = SFProps<BizShelf>;
 
 function ShelfForm(props: Props, ref: Ref<SimpleForm>) {
-  const { draft, onSuccess } = props;
+  const { draft, onSuccess, onLoading } = props;
   const [formRef] = Form.useForm<ShelfPayload>();
   const { data: rooms, isLoading } = useReadAllRoomsQuery(null);
-  const [create] = useCreateShelfMutation();
-  const [update] = useUpdateShelfMutation();
+  const [create, { isLoading: creating }] = useCreateShelfMutation();
+  const [update, { isLoading: updating }] = useUpdateShelfMutation();
   const { message } = App.useApp();
+  const loading = creating || updating;
   const isEditing = !!draft;
+  useEffect(() => {
+    onLoading(loading);
+  }, [loading]);
   useImperativeHandle(ref, () => ({
     submit: () => formRef.submit(),
   }));

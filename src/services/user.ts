@@ -14,6 +14,7 @@ type UserProfile = {
   email_verified: boolean;
   bio: string;
   avatar: string;
+  created_at: string;
   updated_at?: string;
 };
 

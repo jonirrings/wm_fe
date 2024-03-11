@@ -12,6 +12,8 @@ export type BizRoom = {
   room_id: IDType;
   name: string;
   description?: string;
+  created_at: string;
+  updated_at?: string;
 };
 const extendedApi = api.injectEndpoints({
   endpoints: (builder) => ({
@@ -21,7 +23,10 @@ const extendedApi = api.injectEndpoints({
         params: { all: true },
       }),
       transformResponse: extractResp,
-      providesTags: (result) => (result ? [{ type: "room", id: "LIST" }] : []),
+      providesTags: (result) =>
+        result && result.length
+          ? result.map((r) => ({ type: "room", id: r.room_id }))
+          : ["room"],
     }),
     readRooms: builder.query<Paged<BizRoom>, QParam>({
       query: (arg) => ({
@@ -29,7 +34,10 @@ const extendedApi = api.injectEndpoints({
         params: arg,
       }),
       transformResponse: extractResp,
-      providesTags: (result) => (result ? [{ type: "room", id: "LIST" }] : []),
+      providesTags: (result) =>
+        result && result.data.length
+          ? result.data.map((r) => ({ type: "room", id: r.room_id }))
+          : ["room"],
     }),
     readRoom: builder.query<BizRoom, IDType>({
       query: (arg) => roomUrls.one + arg,
@@ -44,7 +52,7 @@ const extendedApi = api.injectEndpoints({
         body: arg,
       }),
       transformResponse: extractResp,
-      invalidatesTags: (result) => (result ? ["room"] : []),
+      invalidatesTags: ["room"],
     }),
     updateRoom: builder.mutation<IDType, RoomPayload & { id: IDType }>({
       query: (arg) => ({

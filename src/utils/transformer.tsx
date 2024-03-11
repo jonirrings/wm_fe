@@ -5,6 +5,9 @@ import { TableRowSelection } from "antd/es/table/interface";
 import { AnyObject } from "antd/es/_util/type";
 import { HookAPI } from "antd/es/modal/useModal";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
+import dayjs from "dayjs";
+import { EMPTY_VALUE, errCodeMap } from "./constants";
+import { get } from "lodash";
 
 export function handleRTKError<T = any>(
   err: RTKError<T>,
@@ -13,20 +16,18 @@ export function handleRTKError<T = any>(
 ) {
   const { data, status } = err;
   switch (status) {
-    case 400:
-    case 500: {
+    case 400: {
       const r = data as ErrResult;
       return message.error(r.message);
-    }
-    case 405: {
-      return message.error("Method Not Allowed");
-    }
-    case 408: {
-      return message.error("Request Timeout");
     }
     case 417: {
       const r = data as ErrResult;
       return message.error(r.message);
+    }
+    default: {
+      const r = data as ErrResult;
+      const defErrMsg = errCodeMap.get(status);
+      return message.error(get(r, ["message"], defErrMsg));
     }
   }
 }
@@ -95,4 +96,24 @@ export function buildRowSelection<
       changeRows.forEach((r) => func(r[key]));
     },
   };
+}
+
+export function renderDate(
+  v: undefined | null | number | string,
+  // inSec?: boolean,
+) {
+  if (v) {
+    /*let d: dayjs.Dayjs;
+    if (inSec) {
+      d = dayjs.unix(v as number);
+    } else {
+      d = dayjs(v);
+    }*/
+    const d = dayjs(v);
+    if (d.isValid()) {
+      return d.format("L LTS");
+    }
+    return EMPTY_VALUE;
+  }
+  return EMPTY_VALUE;
 }

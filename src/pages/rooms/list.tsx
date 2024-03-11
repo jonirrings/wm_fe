@@ -4,19 +4,22 @@ import {
   useDeleteRoomsMutation,
   useReadRoomsQuery,
 } from "../../services/room";
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { App, Button, Modal, Space, Table, Typography } from "antd";
 import { ColumnsType } from "antd/es/table";
 import { PlusOutlined } from "@ant-design/icons";
 import RoomForm from "./RoomForm";
-import { IDType, SimpleForm } from "../../utils/types";
-import { handleBatchResult, handleRTKError } from "../../utils/transformer";
+import { IDType } from "../../utils/types";
+import {
+  handleBatchResult,
+  handleRTKError,
+  renderDate,
+} from "../../utils/transformer";
 import usePager from "../../hooks/usePager";
 import useMF from "../../hooks/useMF";
 import useRowSelection from "../../hooks/useRowSelection";
 
 function RoomList() {
-  const modalFormRef = useRef<SimpleForm>(null);
   const [{ page, size, sort }, pager] = usePager();
   const [mf, mfOps] = useMF<BizRoom>();
   const [rs, rsOps] = useRowSelection<BizRoom>("room_id");
@@ -44,6 +47,18 @@ function RoomList() {
       dataIndex: "name",
       width: 100,
       sorter: true,
+    },
+    {
+      title: "创建时间",
+      dataIndex: "created_at",
+      width: 180,
+      render: renderDate,
+    },
+    {
+      title: "更新时间",
+      dataIndex: "updated_at",
+      width: 180,
+      render: renderDate,
     },
     {
       title: "描述",
@@ -85,17 +100,14 @@ function RoomList() {
       .catch((err) => handleRTKError(err, message));
   }
 
-  function triggerSubmit() {
-    modalFormRef.current?.submit();
-  }
-
   function renderForm() {
     if (mf.vis) {
       return (
         <RoomForm
-          ref={modalFormRef}
+          ref={mf.ref}
           draft={mf.draft}
           onSuccess={mfOps.toHide}
+          onLoading={mfOps.onLoading}
         />
       );
     }
@@ -134,7 +146,8 @@ function RoomList() {
         title={mf.text + "房间"}
         open={mf.vis}
         onCancel={mfOps.toHide}
-        onOk={triggerSubmit}
+        onOk={mfOps.submit}
+        confirmLoading={mf.loading}
         destroyOnClose
       >
         {renderForm()}

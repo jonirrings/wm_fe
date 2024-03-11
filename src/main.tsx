@@ -14,8 +14,10 @@ import {
 
 // 时间设为中文
 import dayjs from "dayjs";
+import localized from "dayjs/plugin/localizedFormat";
 import "dayjs/locale/zh-cn";
 
+dayjs.extend(localized);
 dayjs.locale("zh-cn");
 
 ReactDOM.createRoot(document.getElementById("root")!).render(

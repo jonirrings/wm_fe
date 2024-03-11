@@ -1,12 +1,13 @@
-import { useState } from "react";
-import { IDType } from "../utils/types"; // Modal Form
+import { useRef, useState } from "react";
+import { IDType, SimpleForm } from "../utils/types"; // Modal Form
 
 // Modal Form
 function useMF<T>() {
   const [vis, setVis] = useState(false);
   const [id, setId] = useState<IDType>();
   const [draft, setDraft] = useState<T>();
-
+  const [loading, setLoading] = useState(false);
+  const ref = useRef<SimpleForm>(null);
   const toCreate = () => {
     setId(undefined);
     setDraft(undefined);
@@ -27,6 +28,10 @@ function useMF<T>() {
     setDraft(undefined);
     setVis(false);
   };
+  const submit = () => {
+    ref.current?.submit();
+  };
+
   let text: string = "查看";
   if (id && draft) {
     text = "编辑";
@@ -37,12 +42,14 @@ function useMF<T>() {
   }
 
   return [
-    { text, vis, id, draft },
+    { text, vis, id, draft, loading, ref },
     {
       toCreate,
       toDup,
       toEdit,
       toHide,
+      onLoading: setLoading,
+      submit,
     },
   ] as const;
 }

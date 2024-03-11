@@ -21,6 +21,8 @@ type BizItemsOnShelf = {
   item_id: IDType;
   shelf_id: IDType;
   count: number;
+  created_at: string;
+  updated_at?: string;
 };
 type BizTransferPayload = {
   shelf_from: IDType;

@@ -3,6 +3,7 @@ import { useDispatch } from "react-redux";
 import { publicSlice } from "./public";
 import { userSlice } from "./user";
 import { api } from "../services";
+import rtkQueryErrorMiddleware from "./rtkQueryErrorMiddleware";
 
 export const store = configureStore({
   reducer: {
@@ -20,7 +21,9 @@ export const store = configureStore({
         // Ignore these paths in the state
         ignoredPaths: ["file.abortion"],
       },
-    }).concat(api.middleware),
+    })
+      .concat(api.middleware)
+      .concat(rtkQueryErrorMiddleware),
 });
 
 export type RootState = ReturnType<typeof store.getState>;

@@ -4,7 +4,7 @@ import {
   useDeleteShelvesMutation,
   useReadShelvesQuery,
 } from "../../services/shelf";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   App,
   Button,
@@ -16,10 +16,14 @@ import {
   Typography,
 } from "antd";
 import { ColumnsType } from "antd/es/table";
-import { IDType, SimpleForm } from "../../utils/types";
+import { IDType } from "../../utils/types";
 import { PlusOutlined, SearchOutlined } from "@ant-design/icons";
 import ShelfForm from "./ShelfForm";
-import { handleBatchResult, handleRTKError } from "../../utils/transformer";
+import {
+  handleBatchResult,
+  handleRTKError,
+  renderDate,
+} from "../../utils/transformer";
 import SingleRoom from "../rooms/one";
 import usePager from "../../hooks/usePager";
 import useMF from "../../hooks/useMF";
@@ -31,7 +35,6 @@ type QueryForm = {
 };
 
 function ShelfList() {
-  const modalFormRef = useRef<SimpleForm>(null);
   const [formRef] = Form.useForm();
   const [{ page, size, sort }, pager] = usePager();
   const [mf, mfOps] = useMF<BizShelf>();
@@ -64,6 +67,18 @@ function ShelfList() {
       dataIndex: "name",
       width: 80,
       sorter: true,
+    },
+    {
+      title: "创建时间",
+      dataIndex: "created_at",
+      width: 180,
+      render: renderDate,
+    },
+    {
+      title: "更新时间",
+      dataIndex: "updated_at",
+      width: 180,
+      render: renderDate,
     },
     {
       title: "层数",
@@ -115,17 +130,14 @@ function ShelfList() {
       .catch((err) => handleRTKError(err, message));
   }
 
-  function triggerSubmit() {
-    modalFormRef.current?.submit();
-  }
-
   function renderForm() {
     if (mf.vis) {
       return (
         <ShelfForm
-          ref={modalFormRef}
+          ref={mf.ref}
           draft={mf.draft}
           onSuccess={mfOps.toHide}
+          onLoading={mfOps.onLoading}
         />
       );
     }
@@ -182,7 +194,8 @@ function ShelfList() {
         title={mf.text + "货架"}
         open={mf.vis}
         onCancel={mfOps.toHide}
-        onOk={triggerSubmit}
+        onOk={mfOps.submit}
+        confirmLoading={mf.loading}
         destroyOnClose
       >
         {renderForm()}

@@ -14,6 +14,8 @@ export type BizItem = {
   name: string;
   sn: string;
   description?: string;
+  created_at: string;
+  updated_at?: string;
 };
 
 const extendedApi = api.injectEndpoints({
@@ -24,7 +26,10 @@ const extendedApi = api.injectEndpoints({
         params: { all: true },
       }),
       transformResponse: extractResp,
-      providesTags: (result) => (result ? [{ type: "item", id: "ALL" }] : []),
+      providesTags: (result) =>
+        result && result.length
+          ? result.map((r) => ({ type: "item", id: r.item_id }))
+          : ["item"],
     }),
     readItems: builder.query<Paged<BizItem>, QParam>({
       query: (arg) => ({
@@ -32,7 +37,10 @@ const extendedApi = api.injectEndpoints({
         params: arg,
       }),
       transformResponse: extractResp,
-      providesTags: (result) => (result ? [{ type: "item", id: "LIST" }] : []),
+      providesTags: (result) =>
+        result && result.data.length
+          ? result.data.map((r) => ({ type: "item", id: r.item_id }))
+          : ["item"],
     }),
     readItem: builder.query<BizItem, IDType>({
       query: (arg) => itemUrls.one + arg,
@@ -47,7 +55,7 @@ const extendedApi = api.injectEndpoints({
         body: arg,
       }),
       transformResponse: extractResp,
-      invalidatesTags: (result) => (result ? ["item"] : []),
+      invalidatesTags: ["item"],
     }),
     updateItem: builder.mutation<IDType, ItemPayload & { id: IDType }>({
       query: (arg) => ({
@@ -75,7 +83,7 @@ const extendedApi = api.injectEndpoints({
         method: "DELETE",
       }),
       transformResponse: extractResp,
-      invalidatesTags: (result) => (result ? ["item"] : []),
+      invalidatesTags: ["item"],
     }),
     deleteItems: builder.mutation<BatchResult, IDType[]>({
       query: (arg) => ({
@@ -84,7 +92,7 @@ const extendedApi = api.injectEndpoints({
         body: arg,
       }),
       transformResponse: extractResp,
-      invalidatesTags: (result) => (result ? ["item"] : []),
+      invalidatesTags: ["item"],
     }),
   }),
 });
