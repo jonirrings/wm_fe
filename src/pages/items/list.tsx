@@ -18,6 +18,8 @@ import {
 import usePager from "../../hooks/usePager";
 import useMF from "../../hooks/useMF";
 import useRowSelection from "../../hooks/useRowSelection";
+import ContentContainer from "../../components/ContentContainer";
+import ContentWrapper from "../../components/ContentWrapper";
 
 function ItemList() {
   const [{ page, size, sort }, pager] = usePager();
@@ -122,33 +124,35 @@ function ItemList() {
   }
 
   return (
-    <>
-      <div>
-        <Button
-          loading={deletingMany}
-          disabled={rs.selectedKeys.length === 0}
-          onClick={batchDel}
-        >
-          批量删除
-        </Button>
-        <Button icon={<PlusOutlined />} onClick={mfOps.toCreate}>
-          新增
-        </Button>
-      </div>
-      <Table<BizItem>
-        columns={cols}
-        dataSource={data?.data}
-        loading={isLoading}
-        rowSelection={rs.rowSelection}
-        onChange={pager.onPFSChange}
-        pagination={{
-          onChange: pager.onChange,
-          pageSize: size,
-          current: page,
-          total: data?.total,
-        }}
-        rowKey="item_id"
-      />
+    <ContentContainer>
+      <ContentWrapper>
+        <div>
+          <Button
+            loading={deletingMany}
+            disabled={rs.selectedKeys.length === 0}
+            onClick={batchDel}
+          >
+            批量删除
+          </Button>
+          <Button icon={<PlusOutlined />} onClick={mfOps.toCreate}>
+            新增
+          </Button>
+        </div>
+        <Table<BizItem>
+          columns={cols}
+          dataSource={data?.data}
+          loading={isLoading}
+          rowSelection={rs.rowSelection}
+          onChange={pager.onPFSChange}
+          pagination={{
+            onChange: pager.onChange,
+            pageSize: size,
+            current: page,
+            total: data?.total,
+          }}
+          rowKey="item_id"
+        />
+      </ContentWrapper>
       <Modal
         title={mf.text + "物品"}
         open={mf.vis}
@@ -159,7 +163,7 @@ function ItemList() {
       >
         {renderForm()}
       </Modal>
-    </>
+    </ContentContainer>
   );
 }
 
