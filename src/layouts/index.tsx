@@ -6,6 +6,7 @@ import { Layout } from "antd";
 import Header from "./Header";
 import Footer from "./Footer";
 import Menus from "./Menus";
+import FAB from "./FAB";
 
 function Layouts() {
   // const dispatch: AppDispatch = useAppDispatch();
@@ -27,7 +28,10 @@ function Layouts() {
         <Layout.Sider>
           <Menus />
         </Layout.Sider>
-        <Layout.Content>{outlet}</Layout.Content>
+        <Layout.Content>
+          {outlet}
+          <FAB />
+        </Layout.Content>
       </Layout>
       <Layout.Footer>
         <Footer />
