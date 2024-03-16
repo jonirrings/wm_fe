@@ -2,6 +2,12 @@ import type { RouteObject } from "react-router-dom";
 import type { DefaultComponent } from "@loadable/component";
 import { Skeleton } from "antd";
 import loadable from "@loadable/component";
+import {
+  InternalErrorElement,
+  NotFoundErrorElement,
+} from "../components/ErrorPage";
+import ContentContainer from "../components/ContentContainer";
+import ContentWrapper from "../components/ContentWrapper";
 
 // 生成路由排除内容，不带后缀名转换成“/文件名/”格式
 export const ROUTER_EXCLUDE = [
@@ -58,8 +64,18 @@ export function handleRoutes(
     layouts.push({
       path,
       element: <ComponentNode />,
+      errorElement: InternalErrorElement,
     });
   }
+  layouts.push({
+    path: "*",
+    element: (
+      <ContentContainer>
+        <ContentWrapper>{NotFoundErrorElement}</ContentWrapper>
+      </ContentContainer>
+    ),
+    errorElement: InternalErrorElement,
+  });
 
   return layouts;
 }

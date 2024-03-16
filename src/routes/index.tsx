@@ -1,55 +1,67 @@
 // antd
 import { App, ConfigProvider } from "antd";
-import type { RouteObject } from "react-router-dom";
-import { HashRouter, useRoutes } from "react-router-dom";
+import { createHashRouter, RouterProvider } from "react-router-dom";
 import type { DefaultComponent } from "@loadable/component";
 import { handleRoutes } from "./helper";
 import Layout from "../layouts";
 import Login from "../pages/login";
 import Register from "../pages/register";
-import NotFound from "../pages/NotFound";
 import zhCN from "antd/es/locale/zh_CN";
+import { useEffect } from "react";
+import nprogress from "nprogress";
+import {
+  InternalErrorElement,
+  NotFoundErrorElement,
+} from "../components/ErrorPage";
 
-const pages = import.meta.glob("../pages/**/*") as Record<
-  string,
-  () => Promise<DefaultComponent<unknown>>
->;
+const pages = import.meta.glob([
+  "../pages/**/*.tsx",
+  "!../pages/login",
+]) as Record<string, () => Promise<DefaultComponent<unknown>>>;
 const layouts = handleRoutes(pages);
 
-const routes: RouteObject[] = [
+const router = createHashRouter([
   {
     path: "login",
     element: <Login />,
+    errorElement: InternalErrorElement,
   },
   {
     path: "register",
     element: <Register />,
+    errorElement: InternalErrorElement,
   },
   {
     path: "",
     element: <Layout />,
     children: layouts,
+    errorElement: InternalErrorElement,
   },
   {
     path: "*",
-    element: <NotFound />,
+    element: NotFoundErrorElement,
   },
-];
+]);
 
-function Core() {
-  return useRoutes(routes);
-}
+export default function () {
+  useEffect(() => {
+    nprogress.done();
 
-function Routes() {
+    // 关闭loading
+    const firstElement = document.getElementById("first");
+    if (firstElement && firstElement.style?.display !== "none") {
+      firstElement.style.display = "none";
+    }
+
+    return () => {
+      nprogress.start();
+    };
+  }, []);
   return (
-    <HashRouter>
-      <ConfigProvider locale={zhCN}>
-        <App>
-          <Core />
-        </App>
-      </ConfigProvider>
-    </HashRouter>
+    <ConfigProvider locale={zhCN}>
+      <App>
+        <RouterProvider router={router} />
+      </App>
+    </ConfigProvider>
   );
 }
-
-export default Routes;

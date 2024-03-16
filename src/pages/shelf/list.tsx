@@ -29,6 +29,8 @@ import usePager from "../../hooks/usePager";
 import useMF from "../../hooks/useMF";
 import useRowSelection from "../../hooks/useRowSelection";
 import { useReadAllRoomsQuery } from "../../services/room";
+import ContentContainer from "../../components/ContentContainer";
+import ContentWrapper from "../../components/ContentWrapper";
 
 type QueryForm = {
   room_id?: IDType;
@@ -145,51 +147,53 @@ function ShelfList() {
   }
 
   return (
-    <>
-      <Form<QueryForm> layout="inline" form={formRef} onFinish={onSearch}>
-        <Button
-          loading={deletingMany}
-          disabled={rs.selectedKeys.length === 0}
-          onClick={batchDel}
-        >
-          批量删除
-        </Button>
-        <Button icon={<PlusOutlined />} onClick={mfOps.toCreate}>
-          新增
-        </Button>
-        <Form.Item name="room_id" label="房间">
-          <Select
-            loading={loadingR}
-            options={rooms?.map((r) => ({
-              label: r.name,
-              value: r.room_id,
-            }))}
-            style={{ width: "6em" }}
-            showSearch
-            allowClear
+    <ContentContainer>
+      <ContentWrapper>
+        <Form<QueryForm> layout="inline" form={formRef} onFinish={onSearch}>
+          <Button
+            loading={deletingMany}
+            disabled={rs.selectedKeys.length === 0}
+            onClick={batchDel}
+          >
+            批量删除
+          </Button>
+          <Button icon={<PlusOutlined />} onClick={mfOps.toCreate}>
+            新增
+          </Button>
+          <Form.Item name="room_id" label="房间">
+            <Select
+              loading={loadingR}
+              options={rooms?.map((r) => ({
+                label: r.name,
+                value: r.room_id,
+              }))}
+              style={{ width: "6em" }}
+              showSearch
+              allowClear
+            />
+          </Form.Item>
+          <Button
+            type="primary"
+            htmlType="submit"
+            shape="circle"
+            icon={<SearchOutlined />}
           />
-        </Form.Item>
-        <Button
-          type="primary"
-          htmlType="submit"
-          shape="circle"
-          icon={<SearchOutlined />}
+        </Form>
+        <Table<BizShelf>
+          columns={cols}
+          dataSource={data?.data}
+          loading={isLoading}
+          rowSelection={rs.rowSelection}
+          onChange={pager.onPFSChange}
+          pagination={{
+            onChange: pager.onChange,
+            pageSize: size,
+            current: page,
+            total: data?.total,
+          }}
+          rowKey="shelf_id"
         />
-      </Form>
-      <Table<BizShelf>
-        columns={cols}
-        dataSource={data?.data}
-        loading={isLoading}
-        rowSelection={rs.rowSelection}
-        onChange={pager.onPFSChange}
-        pagination={{
-          onChange: pager.onChange,
-          pageSize: size,
-          current: page,
-          total: data?.total,
-        }}
-        rowKey="shelf_id"
-      />
+      </ContentWrapper>
       <Modal
         title={mf.text + "货架"}
         open={mf.vis}
@@ -200,7 +204,7 @@ function ShelfList() {
       >
         {renderForm()}
       </Modal>
-    </>
+    </ContentContainer>
   );
 }
 

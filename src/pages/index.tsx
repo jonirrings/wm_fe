@@ -16,7 +16,7 @@ function IndexPage() {
   const goFirstMenu = useCallback(() => {
     const firstMenu = getFirstMenu(defaultMenus, permissions);
     navigate(firstMenu);
-  }, [navigate, permissions]);
+  }, [permissions]);
 
   useEffect(() => {
     if (!token) return navigate("/login");
