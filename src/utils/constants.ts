@@ -1,7 +1,8 @@
 export const TOKEN = "token";
 export const EMPTY_VALUE: string = "-";
-export const apiPrefix = "/api/v1";
-
+export const apiPrefix: string = "/api/v1";
+export const sseUrl: string = "/sse";
+export const wssUrl: string = `${location.protocol === "http:" ? "ws" : "wss"}://${location.host}/wss`;
 export const errCodeMap: Map<number, string> = new Map([
   [403, "服务器理解请求客户端的请求，但是拒绝执行此请求"],
   [404, "所请求的资源无法找到"],

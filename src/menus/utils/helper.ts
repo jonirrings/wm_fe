@@ -1,26 +1,14 @@
 import { SideMenu } from "../../utils/types";
+import { compact, split } from "lodash";
 
-/**
- * 根据路由获取展开菜单数组
- * @param router - 路由
- */
-export function getOpenMenuByRouter(router: string): string[] {
-  const arr = splitPath(router),
-    result: string[] = [];
-
-  // 取第一个单词大写为新展开菜单key
-  if (arr.length > 0) result.push(arr[0]);
-
-  // 当路由处于多级目录时
-  if (arr.length > 2) {
-    let str = "/" + arr[0];
-    for (let i = 1; i < arr.length - 1; i++) {
-      str += "/" + arr[i];
-      result.push(str);
-    }
+export function getOpenMenuByPath(path: string): string[] {
+  const arr = splitPath(path);
+  const res = [] as string[];
+  for (let i = 1; i < arr.length; i++) {
+    const p = arr.slice(0, i).join("/");
+    res.push(`/${p}`);
   }
-
-  return result;
+  return res;
 }
 
 /**
@@ -48,18 +36,8 @@ function matchPath(path: string, arr: MenuPath[]): string[] {
   return result;
 }
 
-/**
- * 分割路径且去除首个字符串
- * @param path - 路径
- */
 export function splitPath(path: string): string[] {
-  // 路径为空或非字符串格式则返回空数组
-  if (!path || typeof path !== "string") return [];
-  // 分割路径
-  const result = path?.split("/") || [];
-  // 去除第一个空字符串
-  if (result?.[0] === "") result.shift();
-  return result;
+  return compact(split(path, "/"));
 }
 
 /**
@@ -134,23 +112,14 @@ export function searchMenuValue(data: SearchMenuProps): SideMenu[] {
   return result;
 }
 
-/**
- * 根据key获取菜单当前值
- * @param menus - 菜单
- * @param permissions - 权限列表
- * @param key - 路由值
- * @param fatherNav - 父级面包屑
- * @param result - 返回值
- */
 interface GetMenuByKeyResult {
   label: string;
   key: string;
-  nav: string[];
+  ps: string[];
 }
 
 interface GetMenuByKeyProps {
   menus: SideMenu[] | undefined;
-  permissions: string[];
   key: string;
   fatherNav?: string[];
   result?: GetMenuByKeyResult;
@@ -159,7 +128,7 @@ interface GetMenuByKeyProps {
 export function getMenuByKey(
   data: GetMenuByKeyProps,
 ): GetMenuByKeyResult | undefined {
-  const { menus, permissions, key } = data;
+  const { menus, key } = data;
   let { fatherNav, result } = data;
   if (!menus?.length) return result;
   if (!fatherNav) fatherNav = [];
@@ -167,7 +136,7 @@ export function getMenuByKey(
     result = {
       key: "",
       label: "",
-      nav: [],
+      ps: [],
     };
 
   for (let i = 0; i < menus.length; i++) {
@@ -180,7 +149,6 @@ export function getMenuByKey(
       // 递归子数组，返回结果
       const childProps = {
         menus: menus[i].children,
-        permissions,
         key,
         fatherNav,
         result,
@@ -194,10 +162,10 @@ export function getMenuByKey(
         // 下次递归前删除面包屑前一步错误路径
         fatherNav.pop();
       }
-    } else if (menus[i]?.key === key && hasPermission(menus[i], permissions)) {
+    } else if (menus[i]?.key === key) {
       fatherNav.push(menus[i].label);
       const { label, key } = menus[i];
-      if (key) result = { label, key, nav: fatherNav };
+      if (key) result = { label, key, ps: fatherNav };
     }
   }
 
@@ -236,11 +204,6 @@ export function filterMenus(
   return result;
 }
 
-/**
- * 获取第一个有效权限路由
- * @param menus - 菜单
- * @param permissions - 权限
- */
 export function getFirstMenu(
   menus: SideMenu[],
   permissions: string[],

@@ -1,13 +1,18 @@
+import { useMeQuery } from "../../services/user";
 import { Avatar, Skeleton } from "antd";
-import { useMeQuery } from "../services/user";
 import { UserOutlined } from "@ant-design/icons";
 
-function Header() {
+export default function () {
   const { data, isLoading, error } = useMeQuery();
 
   function renderData() {
     if (data) {
-      return <Avatar alt={data.username} icon={<UserOutlined />} />;
+      return (
+        <div className="text-lg">
+          <Avatar size="small" alt={data.username} icon={<UserOutlined />} />
+          <span className="ml-2">{data.username}</span>
+        </div>
+      );
     }
     return null;
   }
@@ -19,6 +24,7 @@ function Header() {
     return null;
   }
 
+  //todo: add user logout and preference
   return (
     <Skeleton active avatar loading={isLoading}>
       {renderData()}
@@ -26,5 +32,3 @@ function Header() {
     </Skeleton>
   );
 }
-
-export default Header;
